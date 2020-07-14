@@ -6,7 +6,8 @@ const { CalendarBot } = require('./bot');
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-const myBot = new CalendarBot();
+const conversationReferences = {};
+const myBot = new CalendarBot(conversationReferences);
 const server = restify.createServer();
 
 const adapter = new BotFrameworkAdapter({
@@ -34,6 +35,8 @@ const onTurnErrorHandler = async (context, error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
+server.use(restify.plugins.bodyParser());
+
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
   adapter.processActivity(req, res, async (context) => {
@@ -57,6 +60,34 @@ server.on('upgrade', (req, socket, head) => {
     // the WebSocket connection.
     await myBot.run(context);
   });
+});
+
+// Demo send proactive messages to users.
+server.get('/proactive', async (req, res) => {
+  res.setHeader('Content-Type', 'text/html');
+  res.writeHead(200);
+  res.write('<html><body>');
+  res.write('<h1>Proactive messages</h1>');
+  res.write('<form method="POST"><select name="id">');
+  for (let id in conversationReferences) {
+    res.write('<option value="'+ id +'">' + id + '</option>')
+  }
+  res.write('</select><br><textarea name="content"></textarea><br><button type="submit">Send</button></form>')
+  res.write('</body></html>');
+  res.end();
+});
+
+server.post('/proactive', async (req, res) => {
+  let conversationReference = conversationReferences[req.body.id]
+
+  await adapter.continueConversation(conversationReference, async turnContext => {
+    await turnContext.sendActivity(req.body.content);
+  });
+
+  res.setHeader('Content-Type', 'text/html');
+  res.writeHead(200);
+  res.write('<html><body><h1>Notification have been sent.</h1></body></html>');
+  res.end();
 });
 
 server.listen(process.env.port || process.env.PORT || 3978, () => {

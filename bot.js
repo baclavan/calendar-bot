@@ -1,16 +1,21 @@
 const { ActivityHandler, MessageFactory, TurnContext } = require('botbuilder');
 
 class CalendarBot extends ActivityHandler {
-  constructor() {
+  constructor(conversationReferences) {
     super();
+
+    this.conversationReferences = conversationReferences;
+
     // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
     this.onConversationUpdate(async (context, next) => {
-      const conversationReference = TurnContext.getConversationReference(context.activity);
-      console.log(conversationReference)
+      this.addConversationReference(context.activity);
+
       await next();
     });
 
     this.onMessage(async (context, next) => {
+      this.addConversationReference(context.activity);
+
       const replyText = `Echo: ${ context.activity.text }`;
       await context.sendActivity(MessageFactory.text(replyText, replyText));
       // By calling next() you ensure that the next BotHandler is run.
@@ -28,6 +33,11 @@ class CalendarBot extends ActivityHandler {
       // By calling next() you ensure that the next BotHandler is run.
       await next();
     });
+  }
+
+  addConversationReference(activity) {
+    const conversationReference = TurnContext.getConversationReference(activity);
+    this.conversationReferences[conversationReference.conversation.id] = conversationReference;
   }
 }
 

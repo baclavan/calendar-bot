@@ -1,0 +1,47 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.7/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.7",
+  "id": "0b8c8500-c577-11ea-9f94-616cd3b199cc",
+  "version": "1.0.0",
+  "packageName": "vn.name.baclv",
+  "developer": {
+    "name": "La Van Bac",
+    "websiteUrl": "https://labac.name.vn",
+    "privacyUrl": "https://labac.name.vn/privacy.html",
+    "termsOfUseUrl": "https://labac.name.vn/terms.html"
+  },
+  "name": {
+    "short": "Calendar Notification",
+    "full": "Calendar Notification"
+  },
+  "description": {
+    "short": "TODO: add short description here",
+    "full": "TODO: add full description here"
+  },
+  "icons": {
+    "outline": "icon-outline.png",
+    "color": "icon-color.png"
+  },
+  "accentColor": "#D85028",
+  "configurableTabs": [],
+  "staticTabs": [],
+  "bots": [
+    {
+      "botId": "e3f56a4c-ee9b-43d9-8528-a040b3cc00cb",
+      "scopes": [
+        "team",
+        "personal"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": true
+    }
+  ],
+  "connectors": [],
+  "composeExtensions": [],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [],
+  "showLoadingIndicator": false
+}
